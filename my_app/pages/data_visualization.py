@@ -1,8 +1,8 @@
-import streamlit as st
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
+import streamlit as st
 import st_pages as stp
+import matplotlib.pyplot as plt
 
 sidebar_list=("Dashboard",
               "Data analysys",
