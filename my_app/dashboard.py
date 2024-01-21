@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import st_pages as stp
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 sidebar_list=("Dashboard",
               "Data analysys",
@@ -63,18 +64,13 @@ df=df[(df['price']>=low )& (df['price']<=high)]
 high = df['carat'].quantile(0.99)
 high = df['carat'].quantile(0.95)
 df=df[(df['carat']<=high )]
-st.header("Data After Cleanup")
 st.dataframe(df.T)
 
-plots_list=("violin","histogram","box")
+plots_list=("violin","histogram","box","heatmap")
 selected_plot=st.selectbox("Available Plots:",plots_list)
-list_with_categories=("carat","clarity",
-              "color","cut", "x_dimension",
-              "y_dimension","z_dimension",
-              "depth", "table","price")
-list_without_categories=("carat","x_dimension",
-              "y_dimension","z_dimension",
-              "depth","table","price")
+list_with_categories=("clarity","color","cut","carat", "x_dimension","y_dimension","z_dimension","depth", "table","price")
+list_without_categories=("carat","x_dimension","y_dimension","z_dimension","depth","table","price")
+list_of_categories=("clarity","color","cut","price")
 
 if selected_plot==plots_list[0]:
     selectable_list=list_without_categories
@@ -82,15 +78,57 @@ if selected_plot==plots_list[1]:
     selectable_list=list_with_categories
 if selected_plot==plots_list[2]:
     selectable_list=list_without_categories
+if selected_plot==plots_list[3]:
+    selectable_list=list_of_categories
 
 selected_category=st.selectbox("Available Categories:",selectable_list)
 fig, ax = plt.subplots()
+
+df_grouped=df
+for x in list_without_categories:
+    if x !=selected_category:
+        df_grouped[x]= (df_grouped[x]-df_grouped[x].mean())/df_grouped[x].std()
 
 if selected_plot==plots_list[0]:
     ax.violinplot(df[selected_category])
 if selected_plot==plots_list[1]:
     ax.hist(df[selected_category],bins=len(df[selected_category].unique()))
 if selected_plot==plots_list[2]:
-    ax.boxplot(df[selected_category])
+    if selected_category==list_of_categories[0]:
+        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
+    elif selected_category==list_of_categories[1]:
+        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
+    elif selected_category==list_of_categories[2]:
+        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
+    else:
+        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
+    df_grouped=df_grouped.groupby([selected_category]).sum()
+    df_grouped=df_grouped.div(df_grouped.sum(axis=1), axis=0)
+    ax=sns.boxplot(df_grouped, showfliers = False)
+if selected_plot==plots_list[3]:
+    if selected_category==list_of_categories[0]:
+        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
+    elif selected_category==list_of_categories[1]:
+        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
+    elif selected_category==list_of_categories[2]:
+        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
+    else:
+        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
+        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
+    if selected_category==list_of_categories[3]:
+        fig, ax = plt.subplots(figsize=(5, 20))
+
+    df_grouped=df_grouped.groupby([selected_category]).sum()
+    df_grouped=df_grouped.div(df_grouped.sum(axis=1), axis=0)
+    ax=sns.heatmap(df_grouped,annot=True, cmap=plt.cm.hot,vmin=-2,vmax=2, linewidths=.25)
 
 st.pyplot(fig)
