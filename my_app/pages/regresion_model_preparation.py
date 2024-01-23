@@ -58,33 +58,33 @@ df['color']=df['color'].str.upper()
 df['cut']=df['cut'].str.upper()
 df['clarity']=df['clarity'].str.upper()
 
-df['color'].replace('COLORLESS','E',inplace=True,regex=True)
-df['clarity'].replace('FL',11,inplace=True,regex=True)
-df['clarity'].replace('IF',10,inplace=True,regex=True)
-df['clarity'].replace('VVS2',9,inplace=True,regex=True)
-df['clarity'].replace('VVS1',8,inplace=True,regex=True)
-df['clarity'].replace('VS2',7,inplace=True,regex=True)
+df['clarity'].replace('FL',1,inplace=True,regex=True)
+df['clarity'].replace('IF',2,inplace=True,regex=True)
+df['clarity'].replace('VVS2',3,inplace=True,regex=True)
+df['clarity'].replace('VVS1',4,inplace=True,regex=True)
+df['clarity'].replace('VS2',5,inplace=True,regex=True)
 df['clarity'].replace('VS1',6,inplace=True,regex=True)
-df['clarity'].replace('SI2',5,inplace=True,regex=True)
-df['clarity'].replace('SI1',4,inplace=True,regex=True)
-df['clarity'].replace('I1',3,inplace=True,regex=True)
-df['clarity'].replace('I2',2,inplace=True,regex=True)
-df['clarity'].replace('I3',1,inplace=True,regex=True)
+df['clarity'].replace('SI2',7,inplace=True,regex=True)
+df['clarity'].replace('SI1',8,inplace=True,regex=True)
+df['clarity'].replace('I1',9,inplace=True,regex=True)
+df['clarity'].replace('I2',10,inplace=True,regex=True)
+df['clarity'].replace('I3',11,inplace=True,regex=True)
 
-df['color'].replace('D',8,inplace=True,regex=True)
-df['color'].replace('E',7,inplace=True,regex=True)
-df['color'].replace('F',6,inplace=True,regex=True)
-df['color'].replace('G',5,inplace=True,regex=True)
-df['color'].replace('H',4,inplace=True,regex=True)
-df['color'].replace('I',3,inplace=True,regex=True)
-df['color'].replace('J',2,inplace=True,regex=True)
-df['color'].replace('K',1,inplace=True,regex=True)
+df['color'].replace('COLORLESS','E',inplace=True,regex=True)
+df['color'].replace('D',1,inplace=True,regex=True)
+df['color'].replace('E',2,inplace=True,regex=True)
+df['color'].replace('F',3,inplace=True,regex=True)
+df['color'].replace('G',4,inplace=True,regex=True)
+df['color'].replace('H',5,inplace=True,regex=True)
+df['color'].replace('I',6,inplace=True,regex=True)
+df['color'].replace('J',7,inplace=True,regex=True)
+df['color'].replace('K',8,inplace=True,regex=True)
 
-df['cut'].replace('IDEAL',5,inplace=True,regex=True)
-df['cut'].replace('PREMIUM',4,inplace=True,regex=True)
+df['cut'].replace('IDEAL',1,inplace=True,regex=True)
+df['cut'].replace('PREMIUM',2,inplace=True,regex=True)
 df['cut'].replace('GOOD',3,inplace=True,regex=True)
-df['cut'].replace('FAIR',2,inplace=True,regex=True)
-df['cut'].replace('	VERY GOOD',1,inplace=True,regex=True)
+df['cut'].replace('FAIR',4,inplace=True,regex=True)
+df['cut'].replace('	VERY GOOD',5,inplace=True,regex=True)
 df['clarity']=df['clarity'].astype('float64')
 df['color']=df['color'].astype('float64')
 df['cut']=df['cut'].astype('float64')
@@ -116,8 +116,7 @@ diagram_checkbox=st.checkbox('Show diagram')
 
 df_fitted=df
 for x in list_with_categories:
-    if x !=selected_category:
-        df_fitted[x]= (df_fitted[x]-df_fitted[x].mean())/df_fitted[x].std()
+    df_fitted[x]= (df_fitted[x]-df_fitted[x].mean())/df_fitted[x].std()
 model = smf.ols(formula="price ~ "+selected_category,data= df).fit()
 df_fitted['fitted']=model.fittedvalues
 if stats_checkbox:
@@ -150,4 +149,16 @@ if selected_categories:
         if corelation_heatmap_checkbox_categories:
             ax.imshow(df_corr.corr(),cmap=plt.cm.hot)
             st.pyplot(fig)
+selected_list=("x_dimension","z_dimension",  "carat",  "table")
+st.text("Selected categories with lowest P: x_dimension z_dimension carat table")
+df_selected=df[df.columns.intersection(selected_list)]
+st.dataframe(df_selected.corr())
+formula_string="price ~ "
+for x in selected_list:
+    if x.index == 0:
+        formula_string=formula_string+" "+x
+    else:
+        formula_string=formula_string+ " + "+x
+model = smf.ols(formula_string,data= df).fit()
+st.text(model.summary())
         
