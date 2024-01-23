@@ -146,6 +146,8 @@ if selected_categories:
         corelation_heatmap_checkbox_categories=st.checkbox('Show categories correlation heatmap',key="corr_heatmap_2")
         df_corr=df[df.columns.intersection(list_with_categories).intersection(selected_categories)]
         st.dataframe(df_corr.corr())
+        st.text('ssr: ')
+        st.text(model.ssr)
         if corelation_heatmap_checkbox_categories:
             ax.imshow(df_corr.corr(),cmap=plt.cm.hot)
             st.pyplot(fig)
@@ -161,4 +163,6 @@ for x in selected_list:
         formula_string=formula_string+ " + "+x
 model = smf.ols(formula_string,data= df).fit()
 st.text(model.summary())
+st.text('ssr: ')
+st.text(model.ssr)
         
