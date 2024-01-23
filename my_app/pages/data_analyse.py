@@ -7,7 +7,7 @@ sidebar_list=("Dashboard",
               "Data analysys",
               "Data cleanup",
               "Data visualisation",
-              "Regresion model")
+              "Regresion model preparation")
 stp.add_page_title()
 stp.show_pages([
     stp.Page("my_app\dashboard.py", sidebar_list[0],icon= ":notebook:"),
@@ -16,7 +16,7 @@ stp.show_pages([
     stp.Page("my_app\pages\data_cleanup.py", sidebar_list[2],icon= ":books:",in_section=True),
     stp.Page("my_app\pages\data_visualization.py", sidebar_list[3], icon=":bar_chart:",in_section=True),
     stp.Section(name="Regression model", icon=":bar_chart:"),
-    stp.Page("my_app\pages\\regresion_model.py", sidebar_list[4],icon= ":books:",in_section=True)
+    stp.Page("my_app\pages\\regresion_model_preparation.py", sidebar_list[4],icon= ":books:",in_section=True)
 ])
 
 st.header("Imported data")

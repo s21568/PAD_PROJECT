@@ -9,7 +9,7 @@ sidebar_list=("Dashboard",
               "Data analysys",
               "Data cleanup",
               "Data visualisation",
-              "Regresion model")
+              "Regresion model preparation")
 stp.add_page_title()
 stp.show_pages([
     stp.Page("my_app\dashboard.py", sidebar_list[0],icon= ":notebook:"),
@@ -18,7 +18,7 @@ stp.show_pages([
     stp.Page("my_app\pages\data_cleanup.py", sidebar_list[2],icon= ":books:",in_section=True),
     stp.Page("my_app\pages\data_visualization.py", sidebar_list[3], icon=":bar_chart:",in_section=True),
     stp.Section(name="Regression model", icon=":bar_chart:"),
-    stp.Page("my_app\pages\\regresion_model.py", sidebar_list[4],icon= ":books:",in_section=True)
+    stp.Page("my_app\pages\\regresion_model_preparation.py", sidebar_list[4],icon= ":books:",in_section=True)
 ])
 df = pd.read_csv("data\messy_data.csv")
 df.columns=df.columns.str.replace(' ','')
@@ -57,6 +57,37 @@ df['color']=df['color'].str.upper()
 df['cut']=df['cut'].str.upper()
 df['clarity']=df['clarity'].str.upper()
 
+df['color'].replace('COLORLESS','E',inplace=True,regex=True)
+df['clarity'].replace('FL',11,inplace=True,regex=True)
+df['clarity'].replace('IF',10,inplace=True,regex=True)
+df['clarity'].replace('VVS2',9,inplace=True,regex=True)
+df['clarity'].replace('VVS1',8,inplace=True,regex=True)
+df['clarity'].replace('VS2',7,inplace=True,regex=True)
+df['clarity'].replace('VS1',6,inplace=True,regex=True)
+df['clarity'].replace('SI2',5,inplace=True,regex=True)
+df['clarity'].replace('SI1',4,inplace=True,regex=True)
+df['clarity'].replace('I1',3,inplace=True,regex=True)
+df['clarity'].replace('I2',2,inplace=True,regex=True)
+df['clarity'].replace('I3',1,inplace=True,regex=True)
+
+df['color'].replace('D',8,inplace=True,regex=True)
+df['color'].replace('E',7,inplace=True,regex=True)
+df['color'].replace('F',6,inplace=True,regex=True)
+df['color'].replace('G',5,inplace=True,regex=True)
+df['color'].replace('H',4,inplace=True,regex=True)
+df['color'].replace('I',3,inplace=True,regex=True)
+df['color'].replace('J',2,inplace=True,regex=True)
+df['color'].replace('K',1,inplace=True,regex=True)
+
+df['cut'].replace('IDEAL',5,inplace=True,regex=True)
+df['cut'].replace('PREMIUM',4,inplace=True,regex=True)
+df['cut'].replace('GOOD',3,inplace=True,regex=True)
+df['cut'].replace('FAIR',2,inplace=True,regex=True)
+df['cut'].replace('	VERY GOOD',1,inplace=True,regex=True)
+df['clarity']=df['clarity'].astype('float64')
+df['color']=df['color'].astype('float64')
+df['cut']=df['cut'].astype('float64')
+
 low=df['price'].quantile(0.04)
 high = df['price'].quantile(0.97)
 df=df[(df['price']>=low )& (df['price']<=high)]
@@ -69,23 +100,13 @@ st.dataframe(df.T)
 plots_list=("violin","histogram","box","heatmap")
 selected_plot=st.selectbox("Available Plots:",plots_list)
 list_with_categories=("clarity","color","cut","carat", "x_dimension","y_dimension","z_dimension","depth", "table","price")
-list_without_categories=("carat","x_dimension","y_dimension","z_dimension","depth","table","price")
 list_of_categories=("clarity","color","cut","price")
 
-if selected_plot==plots_list[0]:
-    selectable_list=list_without_categories
-if selected_plot==plots_list[1]:
-    selectable_list=list_with_categories
-if selected_plot==plots_list[2]:
-    selectable_list=list_without_categories
-if selected_plot==plots_list[3]:
-    selectable_list=list_of_categories
-
-selected_category=st.selectbox("Available Categories:",selectable_list)
+selected_category=st.selectbox("Available Categories:",list_with_categories)
 fig, ax = plt.subplots()
 
 df_grouped=df
-for x in list_without_categories:
+for x in list_with_categories:
     if x !=selected_category:
         df_grouped[x]= (df_grouped[x]-df_grouped[x].mean())/df_grouped[x].std()
 
@@ -94,36 +115,10 @@ if selected_plot==plots_list[0]:
 if selected_plot==plots_list[1]:
     ax.hist(df[selected_category],bins=len(df[selected_category].unique()))
 if selected_plot==plots_list[2]:
-    if selected_category==list_of_categories[0]:
-        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
-    elif selected_category==list_of_categories[1]:
-        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
-    elif selected_category==list_of_categories[2]:
-        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
-    else:
-        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
     df_grouped=df_grouped.groupby([selected_category]).sum()
     df_grouped=df_grouped.div(df_grouped.sum(axis=1), axis=0)
     ax=sns.boxplot(df_grouped, showfliers = False)
 if selected_plot==plots_list[3]:
-    if selected_category==list_of_categories[0]:
-        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
-    elif selected_category==list_of_categories[1]:
-        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
-    elif selected_category==list_of_categories[2]:
-        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
-    else:
-        df_grouped=df_grouped.drop(list_of_categories[0],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[1],axis=1)
-        df_grouped=df_grouped.drop(list_of_categories[2],axis=1)
     if selected_category==list_of_categories[3]:
         fig, ax = plt.subplots(figsize=(5, 20))
 

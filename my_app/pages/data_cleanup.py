@@ -7,7 +7,7 @@ sidebar_list=("Dashboard",
               "Data analysys",
               "Data cleanup",
               "Data visualisation",
-              "Regresion model")
+              "Regresion model preparation")
 stp.add_page_title()
 stp.show_pages([
     stp.Page("my_app\dashboard.py", sidebar_list[0],icon= ":notebook:"),
@@ -16,7 +16,7 @@ stp.show_pages([
     stp.Page("my_app\pages\data_cleanup.py", sidebar_list[2],icon= ":books:",in_section=True),
     stp.Page("my_app\pages\data_visualization.py", sidebar_list[3], icon=":bar_chart:",in_section=True),
     stp.Section(name="Regression model", icon=":bar_chart:"),
-    stp.Page("my_app\pages\\regresion_model.py", sidebar_list[4],icon= ":books:",in_section=True)
+    stp.Page("my_app\pages\\regresion_model_preparation.py", sidebar_list[4],icon= ":books:",in_section=True)
 ])
 df = pd.read_csv("data\messy_data.csv")
 df.columns=df.columns.str.replace(' ','')
@@ -88,6 +88,44 @@ st.text("color:")
 st.table(df['color'].unique())
 st.text("cut:")
 st.table(df['cut'].unique())
+st.text("now let`s translate color colorless to mean of color values(acoring to standarization)")
+st.text("df['color'].replace('COLORLESS','E',inplace=True,regex=True)")
+df['color'].replace('COLORLESS','E',inplace=True,regex=True)
+st.text("now let`s translate categories to numeric values")
+df['clarity'].replace('FL',11,inplace=True,regex=True)
+df['clarity'].replace('IF',10,inplace=True,regex=True)
+df['clarity'].replace('VVS2',9,inplace=True,regex=True)
+df['clarity'].replace('VVS1',8,inplace=True,regex=True)
+df['clarity'].replace('VS2',7,inplace=True,regex=True)
+df['clarity'].replace('VS1',6,inplace=True,regex=True)
+df['clarity'].replace('SI2',5,inplace=True,regex=True)
+df['clarity'].replace('SI1',4,inplace=True,regex=True)
+df['clarity'].replace('I1',3,inplace=True,regex=True)
+df['clarity'].replace('I2',2,inplace=True,regex=True)
+df['clarity'].replace('I3',1,inplace=True,regex=True)
+
+df['color'].replace('D',8,inplace=True,regex=True)
+df['color'].replace('E',7,inplace=True,regex=True)
+df['color'].replace('F',6,inplace=True,regex=True)
+df['color'].replace('G',5,inplace=True,regex=True)
+df['color'].replace('H',4,inplace=True,regex=True)
+df['color'].replace('I',3,inplace=True,regex=True)
+df['color'].replace('J',2,inplace=True,regex=True)
+df['color'].replace('K',1,inplace=True,regex=True)
+
+df['cut'].replace('IDEAL',5,inplace=True,regex=True)
+df['cut'].replace('PREMIUM',4,inplace=True,regex=True)
+df['cut'].replace('GOOD',3,inplace=True,regex=True)
+df['cut'].replace('FAIR',2,inplace=True,regex=True)
+df['cut'].replace('	VERY GOOD',1,inplace=True,regex=True)
+st.text("and lets change data type of those columns to numeric")
+st.text("""df['clarity']=df['clarity'].astype('float64')
+df['color']=df['color'].astype('float64')
+df['cut']=df['cut'].astype('float64')""")
+df['clarity']=df['clarity'].astype('float64')
+df['color']=df['color'].astype('float64')
+df['cut']=df['cut'].astype('float64')
+st.dataframe(df.T)
 
 st.text("now lets check for outliers")
 st.code("""df['carat'].describe()""")
@@ -138,6 +176,5 @@ st.dataframe(df['carat'].describe())
 st.text("how many records do we have now?")
 st.code("""len(df)""")
 st.text(len(df))
-
 st.text("lets stay there, difference is not that big yet")
 st.dataframe(df.T)
