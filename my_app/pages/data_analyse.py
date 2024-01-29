@@ -22,12 +22,14 @@ stp.show_pages([
 st.header("Imported data")
 df = pd.read_csv("data\messy_data.csv")
 st.dataframe(df.T)
+st.divider()
 
 st.text("how many rows of data we have?")
 st.code("len(df)")
 st.text(len(df))
 
 st.text("let`s remove all whitespace characters from columns names,\n and change x,y,z dimentions whitespaces to '_'")
+st.divider()
 st.code("""df.columns=df.columns.str.replace(' ','')
 df.rename(columns={
     'xdimension':'x_dimension',
@@ -55,6 +57,7 @@ st.table(df['cut'].unique())
 
 st.text(f'they seem to be not really unique, \nwe will have to fix that in next part of date preparation - {sidebar_list[2]}')
 
+st.divider()
 st.text("let`s check how many fields are nan")
 st.code("""st.dataframe(df.isna().sum())""")
 st.dataframe(df.isna().sum())

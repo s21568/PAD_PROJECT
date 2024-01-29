@@ -96,6 +96,7 @@ high = df['carat'].quantile(0.99)
 high = df['carat'].quantile(0.95)
 df=df[(df['carat']<=high )]
 st.dataframe(df.T)
+st.divider()
 
 plots_list=("violin","histogram","box","heatmap")
 selected_plot=st.selectbox("Available Plots:",plots_list)

@@ -5,6 +5,7 @@ import st_pages as stp
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import statsmodels.formula.api as smf
+import statsmodels.api as sm
 
 sidebar_list=("Dashboard",
               "Data analysys",
@@ -109,6 +110,7 @@ if corelation_checkbox_categories:
 
 list_with_categories=("clarity","color","cut","carat", "x_dimension","y_dimension","z_dimension","depth", "table")
 
+st.divider()
 st.text("Price vs selected category diagram and stats")
 selected_category=st.selectbox("Available Categories:",list_with_categories)
 stats_checkbox=st.checkbox('Show stats')
@@ -151,8 +153,9 @@ if selected_categories:
         if corelation_heatmap_checkbox_categories:
             ax.imshow(df_corr.corr(),cmap=plt.cm.hot)
             st.pyplot(fig)
-selected_list=("x_dimension","z_dimension",  "carat",  "table")
-st.text("Selected categories with lowest P: x_dimension z_dimension carat table")
+selected_list=("clarity", "x_dimension","y_dimension","carat","table")
+st.divider()
+st.text("Selected categories with lowest P and highest R-squared: clarit x_dimension y_dimension carat table")
 df_selected=df[df.columns.intersection(selected_list)]
 st.dataframe(df_selected.corr())
 formula_string="price ~ "
@@ -165,4 +168,7 @@ model = smf.ols(formula_string,data= df).fit()
 st.text(model.summary())
 st.text('ssr: ')
 st.text(model.ssr)
-        
+anova_checkbox=st.checkbox('Show anova table',key="anova_checkbox")
+if anova_checkbox:
+    st.dataframe(sm.stats.anova_lm(model,typ=2))
+st.divider()
