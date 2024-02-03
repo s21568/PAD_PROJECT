@@ -129,6 +129,7 @@ if diagram_checkbox:
     ax.scatter( x=df_fitted[selected_category], y=df_fitted['fitted'])
     st.pyplot(fig)
 
+st.divider()
 st.text("Price vs muliselect categories stats")
 selected_categories=st.multiselect("Available Categories:",list_with_categories)
 stats_checkbox_categories=st.checkbox('Show stats',key="second")
