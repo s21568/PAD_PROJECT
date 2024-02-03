@@ -5,7 +5,6 @@ import st_pages as stp
 import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.formula.api as smf
-import statsmodels.api as sm
 
 sidebar_list=("Dashboard",
               "Data analysys",

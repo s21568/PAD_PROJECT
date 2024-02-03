@@ -92,7 +92,6 @@ low=df['price'].quantile(0.04)
 high = df['price'].quantile(0.97)
 df=df[(df['price']>=low )& (df['price']<=high)]
 
-high = df['carat'].quantile(0.99)
 high = df['carat'].quantile(0.95)
 df=df[(df['carat']<=high )]
 st.dataframe(df.T)
